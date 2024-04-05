@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #clock {
+        font-size: 160px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body><br><br><br><br><br><br>
+    <div id="clock"></div>
+
+    <!-- Mova o código JavaScript para o final do corpo do documento -->
+    <script>
+      function updateClock() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+
+        if (hours < 10) {
+          hours = "0" + hours;
+        }
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+          seconds = "0" + seconds;
+        }
+
+        document.getElementById("clock").innerHTML = hours + ":" + minutes + ":" + seconds;
+      }
+      setInterval(updateClock, 1000);
+    </script>
+
+    <!-- Use o atributo "async" na tag de script para carregá-lo de forma assíncrona -->
+    <!-- <script async src="seu_script.js"></script> -->
+
+    <!-- Use o atributo "defer" na tag de script para carregá-lo de forma assíncrona e esperar o carregamento completo da página -->
+    <!-- <script defer src="seu_script.js"></script> -->
+
+  </body>
+</html>

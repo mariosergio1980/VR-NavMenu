@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Calcular VR</title>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  </head>
+  <body>
+
+<style>
+body {
+background-color: #00FF7F
+}
+</style>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="file:///C:/Users/mario.sarmento/Desktop/MS/Sites/Classificador H M/day.css">
+
+    <h1>Calcular VR</h1>
+    <form>
+      <label for="data-inicial"><strong>Data inicial:</strong></label>
+      <input type="date" id="data-inicial" name="data-inicial"><br>
+      <label for="data-final"><strong>Data final:</strong></label>
+      <input type="date" id="data-final" name="data-final"><br>
+      <label for="valor-dia"><strong>Valor do VR por dia:</strong></label>
+      <input type="number" id="valor-dia" name="valor-dia" step="0.01"><br>
+      <button type="button" onclick="calcularDiasUteis()">Calcular</button> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+      <button type="reset" onClick="recarregarAPagina()">Limpar</button><br /><p></p>
+    
+    <div id="resultado"></div>
+
+</div>
+
+</form>
+      <!-- Compiled and minified JavaScript
+    <script src="./day.js"></script> -->
+
+  </body>
+</html>
+
+<script>
+  /*
+      function calcularDiasUteis() {
+        const dataInicial = moment(document.getElementById("data-inicial").value, "YYYY-MM-DD");
+        const dataFinal = moment(document.getElementById("data-final").value, "YYYY-MM-DD");
+        const valorDia = parseFloat(document.getElementById("valor-dia").value);
+
+    let diasUteis = 0;
+    let dataAtual = moment(dataInicial);
+    while (dataAtual <= dataFinal) {
+      if (dataAtual.isoWeekday() <= 5 && !feriado(dataAtual)) {
+        diasUteis++;
+      }
+      dataAtual.add(1, "day");
+    }
+
+    const resultado = document.getElementById("resultado");
+    resultado.innerHTML = `<strong>Total de dias úteis: ${diasUteis}</strong><br>`;
+    resultado.innerHTML += `<strong>Valor total a receber: R$ ${(diasUteis * valorDia).toFixed(2)}</strong>`;
+  }
+
+
+*/
+
+function calcularDiasUteis() {
+  const dataInicial = moment(document.getElementById("data-inicial").value, "YYYY-MM-DD");
+  const dataFinal = moment(document.getElementById("data-final").value, "YYYY-MM-DD");
+  const valorDia = parseFloat(document.getElementById("valor-dia").value);
+
+  if (!dataInicial || !dataFinal || !valorDia) {
+    alert("Por favor, preencha todas as informações para calcular os dias úteis.");
+    return;
+  }
+
+  let diasUteisSemFeriados = 0;
+  let diasUteisComFeriados = 0;
+  let diasFeriados = 0;
+
+  let dataAtual = moment(dataInicial);
+  while (dataAtual <= dataFinal) {
+    if (dataAtual.isoWeekday() <= 5 && !feriado(dataAtual)) {
+      diasUteisSemFeriados++;
+      diasUteisComFeriados++;
+    } else if (feriado(dataAtual)) {
+      diasFeriados++;
+      diasUteisComFeriados++;
+    }
+    dataAtual.add(1, "day");
+  }
+
+  const mensagem = `Total de dias úteis (sem contar feriados): ${diasUteisSemFeriados}\n`
+    + `Total de dias úteis (contando feriados): ${diasUteisComFeriados}\n`
+    + `Total de dias de feriado: ${diasFeriados}\n`
+    + `Valor a receber (sem contar feriados): R$ ${(diasUteisSemFeriados * valorDia).toFixed(2)}\n`
+    + `Valor a receber (contando feriados): R$ ${(diasUteisComFeriados * valorDia).toFixed(2)}`;
+
+  const estiloPopup = `
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px #000;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    font-size: 15px;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    top: 20%;
+    right: 20%; 
+
+  `;
+
+  const estiloBotao = `
+    background-color: #000;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 13px;
+    margin-top: 20px;
+    padding: 10px 10px;
+    text-align: center;
+  `;
+
+  const popup = document.createElement("div");
+  popup.style = estiloPopup;
+
+  const texto = document.createElement("p");
+  texto.innerText = mensagem;
+
+  const botao = document.createElement("button");
+  botao.style = estiloBotao;
+  botao.innerText = "OK";
+
+  botao.onclick = () => {
+    document.body.removeChild(popup);
+  }
+
+  popup.appendChild(texto);
+  popup.appendChild(botao);
+
+  document.body.appendChild(popup);
+}
+
+
+
+
+  function feriado(data) {
+    // Lista de feriados no Rio Grande do Sul em 2023
+    const feriados = [
+      /*
+      "2023-01-01", // Confraternização Universal
+      "2023-02-28", // Carnaval
+      "2023-04-14", // Sexta-feira da Paixão
+      "2023-04-21", // Tiradentes
+      "2023-05-01", // Dia do Trabalho
+      "2023-09-07", // Independência do Brasil
+      "2023-09-20", // Proclamação da República Rio Grandense
+      "2023-06-15", // Corpus Christi
+      "2023-09-07", // Independência do Brasil
+      "2023-10-12", // Nossa Senhora Aparecida
+      "2023-11-02", // Finados
+      "2023-11-15", // Proclamação da República
+      "2023-12-25"  // Natal */
+      "2024-01-01", // Confraternização Universal
+      "2024-02-02", // Nossa Senhora dos Navegantes
+      "2024-02-12", // Carnaval
+      "2024-02-13", // Carnaval
+      "2024-02-14", // Quarta-Feira de Cinzas
+      "2024-03-29", // Sexta-feira Santa
+      "2024-03-31", // Páscoa
+      "2024-04-21", // Tiradentes
+      "2024-05-01", // Dia do Trabalho
+      "2024-05-30", // Corpus Christi
+      "2024-09-07", // Independência do Brasil
+      "2024-09-20", // Revolução Farroupilha
+      "2024-10-12", // Nossa Senhora Aparecida
+      "2024-11-02", // Finados
+      "2024-11-15", // Proclamação da República
+      "2024-12-25"  // Natal
+    ];
+
+    return feriados.includes(data.format("YYYY-MM-DD"));
+  }
+
+
+  function recarregarAPagina(){
+    window.location.reload();
+}
+
+
+</script>
+
+<style>
+
+  /* Estilo para o título da página */
+  h1 {
+    text-align: center;
+    color: #333;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+  }
+
+  /* Estilo para o formulário */
+  form {
+    width: 400px;
+    margin: 0 auto;
+    border: 4px solid #191970;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  /* Estilo para os rótulos */
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+
+  /* Estilo para os campos de entrada */
+  input[type="date"],
+  input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  /* Estilo para o botão de calcular */
+  button[type="button"] {
+    background-color: #2F4F4F;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+  }
+
+  button[type="reset"] {
+    background-color: #2F4F4F;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+  }
+  /* Estilo para o botão de calcular quando o mouse está sobre ele */
+  button[type="button"]:hover {
+    background-color: #0000CD;
+  }
+    button[type="reset"]:hover {
+    background-color: #0000CD;
+  }
+
+  /* Estilo para o resultado */
+#resultado {
+  /* outros estilos */
+  line-height: 2.5;
+    text-align: center;
+    color: #333;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+}
+
+#resultado strong {
+  font-weight: bold;
+
+}
+
+
+
+</style>
